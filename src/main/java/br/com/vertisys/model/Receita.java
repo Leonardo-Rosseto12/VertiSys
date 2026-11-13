@@ -22,30 +22,34 @@ public class Receita {
         return idReceita;
     }
 
-    public double getFotoperiodo() {
-        return fotoperiodo;
-    }
-
-    public double getTempArAlvo() {
-        return tempArAlvo;
-    }
-
-    public int getCicloDias() {
-        return cicloDias;
-    }
-
-    public double getEcMedio() {
-        return ecMedio;
+    public double getDensidadeSemeadura() {
+        return densidadeSemeadura;
     }
 
     public double getPhMedio() {
         return phMedio;
     }
 
-    public double getDensidadeSemeadura() {
-        return densidadeSemeadura;
+    public double getEcMedio() {
+        return ecMedio;
     }
-    //--------------------------------------------------------------------------------
+
+    public int getCicloDias() {
+        return cicloDias;
+    }
+
+    public double getTempArAlvo() {
+        return tempArAlvo;
+    }
+
+    public double getFotoperiodo() {
+        return fotoperiodo;
+    }
+
+    public void setIdReceita(int idReceita) {
+        this.idReceita = idReceita;
+    }
+
     public void setDensidadeSemeadura(double densidadeSemeadura) {
         this.densidadeSemeadura = densidadeSemeadura;
     }

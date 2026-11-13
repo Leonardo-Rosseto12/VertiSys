@@ -28,6 +28,10 @@ public class Cultura {
         return receita;
     }
 
+    public void setIdCultura(int idCultura) {
+        this.idCultura = idCultura;
+    }
+
     public void setNomePopular(String nomePopular) {
         this.nomePopular = nomePopular;
     }
