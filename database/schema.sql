@@ -21,3 +21,34 @@ CREATE TABLE cultura (
     FOREIGN KEY (id_receita)
         REFERENCES receita(id_receita)
 );
+
+CREATE TABLE estante (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    localizacao VARCHAR(100) NOT NULL,
+    status VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE lote (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data_semeadura DATE NOT NULL,
+    status ENUM(
+        'EM_GERMINACAO',
+        'EM_CRESCIMENTO',
+        'PRONTO_PARA_COLHEITA',
+        'COLHIDO',
+        'CANCELADO'
+    ) NOT NULL DEFAULT 'EM_GERMINACAO',
+    data_colheita_estimada DATE NOT NULL,
+    qtd_bandejas INT NOT NULL,
+    area_ocupada DOUBLE NOT NULL,
+    id_cultura INT NOT NULL,
+    id_estante INT NOT NULL,
+
+    CONSTRAINT fk_lote_cultura
+        FOREIGN KEY (id_cultura)
+        REFERENCES cultura(id_cultura),
+
+    CONSTRAINT fk_lote_estante
+        FOREIGN KEY (id_estante)
+        REFERENCES estante(id)
+);
