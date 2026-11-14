@@ -7,6 +7,7 @@ import br.com.vertisys.controller.LoteController;
 import br.com.vertisys.controller.SensorController;
 import br.com.vertisys.controller.LeituraController;
 import br.com.vertisys.controller.AlertaController;
+import br.com.vertisys.controller.ColheitaController;
 import br.com.vertisys.model.Cultura;
 import br.com.vertisys.model.Receita;
 import br.com.vertisys.model.Estante;
@@ -16,6 +17,8 @@ import br.com.vertisys.model.Leitura;
 import br.com.vertisys.model.LeituraHidroponica;
 import br.com.vertisys.model.LeituraAmbiental;
 import br.com.vertisys.model.Alerta;
+import br.com.vertisys.model.Colheita;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +36,7 @@ public class Main {
     private static final SensorController sensorController = new SensorController();
     private static final LeituraController leituraController = new LeituraController();
     private static final AlertaController alertaController = new AlertaController();
+    private static final ColheitaController colheitaController = new ColheitaController();
 
     public static void main(String[] args) {
 
@@ -47,6 +51,7 @@ public class Main {
             System.out.println("5 - Gerenciar Sensores");
             System.out.println("6 - Gerenciar Leituras");
             System.out.println("7 - Gerenciar Alertas");
+            System.out.println("8 - Gerenciar Colheitas");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -60,6 +65,7 @@ public class Main {
                 case 5 -> menuSensor();
                 case 6 -> menuLeitura();
                 case 7 -> menuAlerta();
+                case 8 -> menuColheita();
                 case 0 -> System.out.println("Encerrando o VertiSys...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -287,6 +293,38 @@ public class Main {
                 }
             } catch (SQLException e) {
                 System.out.println("Erro ao executar operação: " + e.getMessage());
+            }
+        } while (opcao != 0);
+    }
+
+    private static void menuColheita() {
+
+        int opcao;
+
+        do {
+            System.out.println("\n---------- COLHEITAS ----------");
+            System.out.println("1 - Registrar colheita");
+            System.out.println("2 - Consultar colheita por lote");
+            System.out.println("3 - Listar colheitas");
+            System.out.println("4 - Relatório de produtividade");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(input.nextLine());
+
+            try {
+                switch (opcao) {
+                    case 1 -> cadastrarColheita();
+                    case 2 -> consultarColheita();
+                    case 3 -> listarColheitas();
+                    case 4 -> relatorioProdutividade();
+                    case 0 -> System.out.println("Voltando ao menu principal...");
+                    default -> System.out.println("Opção inválida!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao executar operação: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Dados inválidos: " + e.getMessage());
             }
         } while (opcao != 0);
     }
@@ -933,7 +971,7 @@ public class Main {
         if (sensorController.excluir(id))
             System.out.println("Sensor excluído!");
         else
-            System.out.println("Sensor não encontrado ou não foi possível excluí-lo.");
+            System.out.println("Sensor não encontrada ou não foi possível excluí-lo.");
     }
 
     private static void exibirSensor(Sensor sensor) {
@@ -1118,5 +1156,167 @@ public class Main {
         System.out.println("Descrição: " + alerta.getDescricao());
         System.out.println("Data e hora: " + alerta.getDataHora());
         System.out.println("Leitura vinculada: " + alerta.getLeitura().getId());
+    }
+
+    private static void cadastrarColheita() throws SQLException {
+
+        System.out.println("\n---------- REGISTRAR COLHEITA ----------");
+
+        System.out.print("ID do lote: ");
+        int idLote = Integer.parseInt(input.nextLine());
+
+        Lote lote = loteController.buscarPorId(idLote);
+
+        if (lote == null) {
+            System.out.println("Lote não encontrado!");
+            return;
+        }
+
+        System.out.println("Lote: " + lote.getId());
+        System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+        System.out.println("Status: " + lote.getStatus());
+
+        System.out.print("Data da colheita (AAAA-MM-DD): ");
+        LocalDate data = LocalDate.parse(input.nextLine());
+
+        System.out.print("Peso total da biomassa (kg): ");
+        double pesoBiomassa = Double.parseDouble(input.nextLine());
+
+        System.out.print("Peso de descarte (kg): ");
+        double pesoDescarte = Double.parseDouble(input.nextLine());
+
+        Colheita colheita = new Colheita(
+                data,
+                pesoBiomassa,
+                pesoDescarte,
+                lote
+        );
+
+        if (colheitaController.cadastrar(colheita)) {
+            System.out.println("Colheita registrada com sucesso!");
+            System.out.println("Peso aproveitado: " + (pesoBiomassa - pesoDescarte) + " kg");
+            System.out.println("Rendimento: " + colheita.calcularRendimentoArea() + " kg/m²");
+            System.out.println("Taxa de aproveitamento: " + colheita.calcularAproveitamento() + "%");
+        } else
+            System.out.println("Não foi possível registrar a colheita.");
+    }
+
+    private static void consultarColheita() throws SQLException {
+
+        System.out.println("\n---------- CONSULTAR COLHEITA ----------");
+
+        System.out.print("Informe o ID do lote: ");
+        int idLote = Integer.parseInt(input.nextLine());
+
+        Colheita colheita = colheitaController.buscarPorLote(idLote);
+
+        if (colheita == null) {
+            System.out.println("Colheita não encontrada!");
+            return;
+        }
+
+        exibirColheita(colheita);
+    }
+
+    private static void listarColheitas() throws SQLException {
+
+        System.out.println("\n---------- LISTAR COLHEITAS ----------");
+
+        List<Colheita> colheitas = colheitaController.listar();
+
+        if (colheitas.isEmpty()) {
+            System.out.println("Nenhuma colheita registrada.");
+            return;
+        }
+
+        for (Colheita colheita : colheitas) {
+            System.out.println();
+            exibirColheita(colheita);
+        }
+    }
+
+    private static void exibirColheita(Colheita colheita) {
+
+        Lote lote = colheita.getLote();
+
+        System.out.println("Lote: " + lote.getId());
+        System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+        System.out.println("Data da colheita: " + colheita.getData());
+        System.out.println("Peso total: " + colheita.getPesoBiomassa() + " kg");
+        System.out.println("Peso descartado: " + colheita.getPesoDescarte() + " kg");
+        System.out.println("Peso aproveitado: " +
+                (colheita.getPesoBiomassa() - colheita.getPesoDescarte()) + " kg");
+        System.out.println("Área ocupada: " + lote.getAreaOcupada() + " m²");
+        System.out.println("Rendimento: " + colheita.calcularRendimentoArea() + " kg/m²");
+        System.out.println("Ciclo real: " + colheita.calcularTempoCiclo() + " dias");
+        System.out.println("Ciclo planejado: " + lote.getCultura().getReceita().getCicloDias() + " dias");
+        System.out.println("Taxa de aproveitamento: " + colheita.calcularAproveitamento() + "%");
+    }
+
+    private static void relatorioProdutividade() throws SQLException {
+
+        System.out.println("\n---------- RELATÓRIO DE PRODUTIVIDADE ----------");
+
+        List<Colheita> colheitas = colheitaController.listar();
+
+        if (colheitas.isEmpty()) {
+            System.out.println("Nenhuma colheita registrada para gerar o relatório.");
+            return;
+        }
+
+        double pesoTotal = 0;
+        double pesoDescarte = 0;
+        double pesoAproveitado = 0;
+        double areaTotal = 0;
+        double totalCicloReal = 0;
+        double totalCicloPlanejado = 0;
+
+        for (Colheita colheita : colheitas) {
+
+            Lote lote = colheita.getLote();
+
+            double aproveitado = colheita.getPesoBiomassa() - colheita.getPesoDescarte();
+
+            double rendimento = colheita.calcularRendimentoArea();
+
+            long cicloReal = colheita.calcularTempoCiclo();
+
+            int cicloPlanejado = lote.getCultura().getReceita().getCicloDias();
+
+            System.out.println("\n---------- LOTE " + lote.getId() + " ----------");
+            System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+            System.out.println("Peso total: " + colheita.getPesoBiomassa() + " kg");
+            System.out.println("Peso descartado: " + colheita.getPesoDescarte() + " kg");
+            System.out.println("Peso aproveitado: " + aproveitado + " kg");
+            System.out.println("Rendimento: " + rendimento + " kg/m²");
+            System.out.println("Ciclo real: " + cicloReal + " dias");
+            System.out.println("Ciclo planejado: " + cicloPlanejado + " dias");
+            System.out.println("Aproveitamento: " + colheita.calcularAproveitamento() + "%");
+
+            pesoTotal += colheita.getPesoBiomassa();
+            pesoDescarte += colheita.getPesoDescarte();
+            pesoAproveitado += aproveitado;
+            areaTotal += lote.getAreaOcupada();
+            totalCicloReal += cicloReal;
+            totalCicloPlanejado += cicloPlanejado;
+        }
+
+        double rendimentoConsolidado = pesoAproveitado / areaTotal;
+        double aproveitamentoConsolidado = (pesoAproveitado / pesoTotal) * 100;
+
+        double mediaCicloReal = totalCicloReal / colheitas.size();
+        double mediaCicloPlanejado = totalCicloPlanejado / colheitas.size();
+
+        System.out.println("\n---------- RESUMO CONSOLIDADO ----------");
+
+        System.out.println("Quantidade de lotes colhidos: " + colheitas.size());
+        System.out.println("Peso total colhido: " + pesoTotal + " kg");
+        System.out.println("Peso total descartado: " + pesoDescarte + " kg");
+        System.out.println("Peso total aproveitado: " + pesoAproveitado + " kg");
+        System.out.println("Área total considerada: " + areaTotal + " m²");
+        System.out.println("Rendimento consolidado: " + rendimentoConsolidado + " kg/m²");
+        System.out.println("Taxa de aproveitamento consolidada: " + aproveitamentoConsolidado + "%");
+        System.out.println("Média do ciclo real: " + mediaCicloReal + " dias");
+        System.out.println("Média do ciclo planejado: " + mediaCicloPlanejado + " dias");
     }
 }

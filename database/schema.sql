@@ -93,3 +93,20 @@ CREATE TABLE alerta (
     id_leitura INT NOT NULL,
     FOREIGN KEY (id_leitura) REFERENCES leitura(id)
 );
+
+CREATE TABLE colheita (
+    id_lote INT PRIMARY KEY,
+    data_colheita DATE NOT NULL,
+    peso_biomassa DECIMAL(10,3) NOT NULL,
+    peso_descarte DECIMAL(10,3) NOT NULL,
+
+    CONSTRAINT fk_colheita_lote
+        FOREIGN KEY (id_lote)
+        REFERENCES lote(id),
+
+    CONSTRAINT chk_peso_biomassa
+        CHECK (peso_biomassa > 0),
+
+    CONSTRAINT chk_peso_descarte
+        CHECK (peso_descarte >= 0 AND peso_descarte <= peso_biomassa)
+);
