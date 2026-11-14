@@ -52,3 +52,61 @@ CREATE TABLE lote (
         FOREIGN KEY (id_estante)
         REFERENCES estante(id)
 );
+
+CREATE TABLE sensor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    localizacao VARCHAR(100) NOT NULL,
+    tipo ENUM('HIDROPONICO', 'AMBIENTAL') NOT NULL,
+    id_lote INT NOT NULL,
+    FOREIGN KEY (id_lote) REFERENCES lote(id)
+);
+
+CREATE TABLE leitura (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data_hora DATETIME NOT NULL,
+    id_sensor INT NOT NULL,
+    FOREIGN KEY (id_sensor) REFERENCES sensor(id)
+);
+
+CREATE TABLE leitura_hidroponica (
+    id_leitura INT PRIMARY KEY,
+    ph DECIMAL(4,2) NOT NULL,
+    ec DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_leitura) REFERENCES leitura(id)
+);
+
+CREATE TABLE leitura_ambiental (
+    id_leitura INT PRIMARY KEY,
+    temp_ar DECIMAL(5,2) NOT NULL,
+    umidade DECIMAL(5,2) NOT NULL,
+    co2 DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_leitura) REFERENCES leitura(id)
+);
+
+CREATE TABLE alerta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    criticidade VARCHAR(20) NOT NULL,
+    parametro VARCHAR(30) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    data_hora DATETIME NOT NULL,
+    id_leitura INT NOT NULL,
+    FOREIGN KEY (id_leitura) REFERENCES leitura(id)
+);
+
+CREATE TABLE colheita (
+    id_lote INT PRIMARY KEY,
+    data_colheita DATE NOT NULL,
+    peso_biomassa DECIMAL(10,3) NOT NULL,
+    peso_descarte DECIMAL(10,3) NOT NULL,
+
+    CONSTRAINT fk_colheita_lote
+        FOREIGN KEY (id_lote)
+        REFERENCES lote(id),
+
+    CONSTRAINT chk_peso_biomassa
+        CHECK (peso_biomassa > 0),
+
+    CONSTRAINT chk_peso_descarte
+        CHECK (peso_descarte >= 0 AND peso_descarte <= peso_biomassa)
+);

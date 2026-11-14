@@ -4,12 +4,24 @@ import br.com.vertisys.controller.CulturaController;
 import br.com.vertisys.controller.ReceitaController;
 import br.com.vertisys.controller.EstanteController;
 import br.com.vertisys.controller.LoteController;
+import br.com.vertisys.controller.SensorController;
+import br.com.vertisys.controller.LeituraController;
+import br.com.vertisys.controller.AlertaController;
+import br.com.vertisys.controller.ColheitaController;
 import br.com.vertisys.model.Cultura;
 import br.com.vertisys.model.Receita;
 import br.com.vertisys.model.Estante;
 import br.com.vertisys.model.Lote;
+import br.com.vertisys.model.Sensor;
+import br.com.vertisys.model.Leitura;
+import br.com.vertisys.model.LeituraHidroponica;
+import br.com.vertisys.model.LeituraAmbiental;
+import br.com.vertisys.model.Alerta;
+import br.com.vertisys.model.Colheita;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,6 +33,10 @@ public class Main {
     private static final CulturaController culturaController = new CulturaController();
     private static final EstanteController estanteController = new EstanteController();
     private static final LoteController loteController = new LoteController();
+    private static final SensorController sensorController = new SensorController();
+    private static final LeituraController leituraController = new LeituraController();
+    private static final AlertaController alertaController = new AlertaController();
+    private static final ColheitaController colheitaController = new ColheitaController();
 
     public static void main(String[] args) {
 
@@ -32,6 +48,10 @@ public class Main {
             System.out.println("2 - Gerenciar Culturas");
             System.out.println("3 - Gerenciar Estantes");
             System.out.println("4 - Gerenciar Lotes");
+            System.out.println("5 - Gerenciar Sensores");
+            System.out.println("6 - Gerenciar Leituras");
+            System.out.println("7 - Gerenciar Alertas");
+            System.out.println("8 - Gerenciar Colheitas");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -42,6 +62,10 @@ public class Main {
                 case 2 -> menuCultura();
                 case 3 -> menuEstante();
                 case 4 -> menuLote();
+                case 5 -> menuSensor();
+                case 6 -> menuLeitura();
+                case 7 -> menuAlerta();
+                case 8 -> menuColheita();
                 case 0 -> System.out.println("Encerrando o VertiSys...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -80,7 +104,6 @@ public class Main {
             } catch (SQLException e) {
                 System.out.println("Erro ao executar operação: " + e.getMessage());
             }
-
         } while (opcao != 0);
     }
 
@@ -113,7 +136,6 @@ public class Main {
             } catch (SQLException e) {
                 System.out.println("Erro ao executar operação: " + e.getMessage());
             }
-
         } while (opcao != 0);
     }
 
@@ -148,7 +170,6 @@ public class Main {
             } catch (IllegalArgumentException e) {
                 System.out.println("Dados inválidos: " + e.getMessage());
             }
-
         } while (opcao != 0);
     }
 
@@ -183,7 +204,128 @@ public class Main {
             } catch (IllegalArgumentException e) {
                 System.out.println("Dados inválidos: " + e.getMessage());
             }
+        } while (opcao != 0);
+    }
 
+    private static void menuSensor() {
+
+        int opcao;
+
+        do {
+            System.out.println("\n---------- SENSORES ----------");
+            System.out.println("1 - Cadastrar sensor");
+            System.out.println("2 - Consultar sensor");
+            System.out.println("3 - Listar sensores");
+            System.out.println("4 - Atualizar sensor");
+            System.out.println("5 - Excluir sensor");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(input.nextLine());
+
+            try {
+                switch (opcao) {
+                    case 1 -> cadastrarSensor();
+                    case 2 -> consultarSensor();
+                    case 3 -> listarSensores();
+                    case 4 -> atualizarSensor();
+                    case 5 -> excluirSensor();
+                    case 0 -> System.out.println("Voltando ao menu principal...");
+                    default -> System.out.println("Opção inválida!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao executar operação: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Dados inválidos: " + e.getMessage());
+            }
+        } while (opcao != 0);
+    }
+
+    private static void menuLeitura() {
+
+        int opcao;
+
+        do {
+            System.out.println("\n---------- LEITURAS ----------");
+            System.out.println("1 - Cadastrar leitura");
+            System.out.println("2 - Consultar leitura");
+            System.out.println("3 - Listar leituras");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(input.nextLine());
+
+            try {
+                switch (opcao) {
+                    case 1 -> cadastrarLeitura();
+                    case 2 -> consultarLeitura();
+                    case 3 -> listarLeituras();
+                    case 0 -> System.out.println("Voltando ao menu principal...");
+                    default -> System.out.println("Opção inválida!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao executar operação: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Dados inválidos: " + e.getMessage());
+            }
+        } while (opcao != 0);
+    }
+
+    private static void menuAlerta() {
+
+        int opcao;
+
+        do {
+            System.out.println("\n---------- ALERTAS ----------");
+            System.out.println("1 - Consultar alerta");
+            System.out.println("2 - Listar alertas");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(input.nextLine());
+
+            try {
+                switch (opcao) {
+                    case 1 -> consultarAlerta();
+                    case 2 -> listarAlertas();
+                    case 0 -> System.out.println("Voltando ao menu principal...");
+                    default -> System.out.println("Opção inválida!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao executar operação: " + e.getMessage());
+            }
+        } while (opcao != 0);
+    }
+
+    private static void menuColheita() {
+
+        int opcao;
+
+        do {
+            System.out.println("\n---------- COLHEITAS ----------");
+            System.out.println("1 - Registrar colheita");
+            System.out.println("2 - Consultar colheita por lote");
+            System.out.println("3 - Listar colheitas");
+            System.out.println("4 - Relatório de produtividade");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(input.nextLine());
+
+            try {
+                switch (opcao) {
+                    case 1 -> cadastrarColheita();
+                    case 2 -> consultarColheita();
+                    case 3 -> listarColheitas();
+                    case 4 -> relatorioProdutividade();
+                    case 0 -> System.out.println("Voltando ao menu principal...");
+                    default -> System.out.println("Opção inválida!");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao executar operação: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Dados inválidos: " + e.getMessage());
+            }
         } while (opcao != 0);
     }
 
@@ -699,5 +841,482 @@ public class Main {
         System.out.println("Previsão de colheita: " + lote.getDataColheitaEstimada());
         System.out.println("Quantidade de bandejas: " + lote.getQtdBandejas());
         System.out.println("Área ocupada: " + lote.getAreaOcupada());
+    }
+
+    private static void cadastrarSensor() throws SQLException {
+
+        System.out.println("\n---------- CADASTRAR SENSOR ----------");
+
+        System.out.print("Nome: ");
+        String nome = input.nextLine();
+
+        System.out.print("Localização: ");
+        String localizacao = input.nextLine();
+
+        System.out.println("Tipo do sensor:");
+        System.out.println("1 - HIDROPONICO");
+        System.out.println("2 - AMBIENTAL");
+        System.out.print("Escolha: ");
+
+        int tipoOpcao = Integer.parseInt(input.nextLine());
+
+        String tipo;
+
+        if (tipoOpcao == 1)
+            tipo = "HIDROPONICO";
+        else if (tipoOpcao == 2)
+            tipo = "AMBIENTAL";
+        else {
+            System.out.println("Tipo inválido!");
+            return;
+        }
+
+        System.out.print("ID do lote: ");
+        int idLote = Integer.parseInt(input.nextLine());
+
+        Sensor sensor = new Sensor(nome, localizacao, tipo, idLote);
+
+        int id = sensorController.cadastrar(sensor);
+
+        if (id > 0) System.out.println("Sensor cadastrado! ID: " + id);
+        else System.out.println("Não foi possível cadastrar o sensor.");
+    }
+
+    private static void consultarSensor() throws SQLException {
+
+        System.out.println("\n---------- CONSULTAR SENSOR ----------");
+        System.out.print("Informe o ID: ");
+
+        int id = Integer.parseInt(input.nextLine());
+
+        Sensor sensor = sensorController.buscarPorId(id);
+
+        if (sensor == null) {
+            System.out.println("Sensor não encontrado!");
+            return;
+        }
+
+        exibirSensor(sensor);
+    }
+
+    private static void listarSensores() throws SQLException {
+
+        System.out.println("\n---------- LISTAR SENSORES ----------");
+
+        List<Sensor> sensores = sensorController.listar();
+
+        if (sensores.isEmpty()) {
+            System.out.println("Nenhum sensor cadastrado.");
+            return;
+        }
+
+        for (Sensor sensor : sensores) {
+            System.out.println();
+            exibirSensor(sensor);
+        }
+    }
+
+    private static void atualizarSensor() throws SQLException {
+
+        System.out.println("\n---------- ATUALIZAR SENSOR ----------");
+        System.out.print("Informe o ID: ");
+
+        int id = Integer.parseInt(input.nextLine());
+
+        Sensor sensor = sensorController.buscarPorId(id);
+
+        if (sensor == null) {
+            System.out.println("Sensor não encontrado!");
+            return;
+        }
+
+        System.out.print("Novo nome: ");
+        sensor.setNome(input.nextLine());
+
+        System.out.print("Nova localização: ");
+        sensor.setLocalizacao(input.nextLine());
+
+        System.out.println("Tipo do sensor:");
+        System.out.println("1 - HIDROPONICO");
+        System.out.println("2 - AMBIENTAL");
+        System.out.print("Escolha: ");
+
+        int tipoOpcao = Integer.parseInt(input.nextLine());
+
+        if (tipoOpcao == 1)
+            sensor.setTipo("HIDROPONICO");
+        else if (tipoOpcao == 2)
+            sensor.setTipo("AMBIENTAL");
+        else {
+            System.out.println("Tipo inválido!");
+            return;
+        }
+
+        System.out.print("Novo ID do lote: ");
+        sensor.setIdLote(Integer.parseInt(input.nextLine()));
+
+        if (sensorController.atualizar(sensor))
+            System.out.println("Sensor atualizado!");
+        else
+            System.out.println("Não foi possível atualizar o sensor.");
+    }
+
+    private static void excluirSensor() throws SQLException {
+
+        System.out.println("\n---------- EXCLUIR SENSOR ----------");
+        System.out.print("Informe o ID: ");
+
+        int id = Integer.parseInt(input.nextLine());
+
+        if (sensorController.excluir(id))
+            System.out.println("Sensor excluído!");
+        else
+            System.out.println("Sensor não encontrada ou não foi possível excluí-lo.");
+    }
+
+    private static void exibirSensor(Sensor sensor) {
+
+        System.out.println("ID: " + sensor.getId());
+        System.out.println("Nome: " + sensor.getNome());
+        System.out.println("Localização: " + sensor.getLocalizacao());
+        System.out.println("Tipo: " + sensor.getTipo());
+        System.out.println("Lote vinculado: " + sensor.getIdLote());
+    }
+
+    private static void cadastrarLeitura() throws SQLException {
+
+        System.out.println("\n---------- CADASTRAR LEITURA ----------");
+
+        System.out.print("ID do sensor: ");
+        int idSensor = Integer.parseInt(input.nextLine());
+
+        Sensor sensor = sensorController.buscarPorId(idSensor);
+
+        if (sensor == null) {
+            System.out.println("Sensor não encontrado!");
+            return;
+        }
+
+        LocalDateTime dataHora = LocalDateTime.now();
+
+        Leitura leitura;
+
+        if (sensor.getTipo().equals("HIDROPONICO")) {
+
+            System.out.print("pH da água: ");
+            double ph = Double.parseDouble(input.nextLine());
+
+            System.out.print("EC da solução nutritiva: ");
+            double ec = Double.parseDouble(input.nextLine());
+
+            leitura = new LeituraHidroponica(dataHora, sensor, ph, ec);
+
+        } else {
+
+            System.out.print("Temperatura do ar (°C): ");
+            double tempAr = Double.parseDouble(input.nextLine());
+
+            System.out.print("Umidade relativa (%): ");
+            double umidade = Double.parseDouble(input.nextLine());
+
+            System.out.print("Concentração de CO2 (ppm): ");
+            double co2 = Double.parseDouble(input.nextLine());
+
+            leitura = new LeituraAmbiental(dataHora, sensor, tempAr, umidade, co2);
+        }
+
+        leituraController.cadastrar(leitura);
+
+        System.out.println("Leitura cadastrada! ID: " + leitura.getId());
+        System.out.println("Data e hora: " + leitura.getDataHora());
+
+        List<Alerta> alertasAntes = alertaController.listar();
+
+        alertaController.analisarLeitura(leitura);
+
+        List<Alerta> alertasDepois = alertaController.listar();
+
+        int quantidadeGerada = 0;
+
+        for (Alerta alerta : alertasDepois) {
+            if (alerta.getLeitura().getId() == leitura.getId()) {
+                boolean jaExistia = false;
+
+                for (Alerta anterior : alertasAntes)
+                    if (anterior.getId() == alerta.getId()) jaExistia = true;
+
+                if (!jaExistia) {
+                    quantidadeGerada++;
+                    exibirAlerta(alerta);
+                }
+            }
+        }
+
+        if (quantidadeGerada == 0)
+            System.out.println("Nenhum alerta gerado. Parâmetros dentro dos limites.");
+        else
+            System.out.println("Total de alertas gerados: " + quantidadeGerada);
+    }
+
+    private static void consultarLeitura() throws SQLException {
+
+        System.out.println("\n---------- CONSULTAR LEITURA ----------");
+        System.out.print("Informe o ID: ");
+
+        int id = Integer.parseInt(input.nextLine());
+
+        Leitura leitura = leituraController.buscarPorId(id);
+
+        if (leitura == null) {
+            System.out.println("Leitura não encontrada!");
+            return;
+        }
+
+        exibirLeitura(leitura);
+    }
+
+    private static void listarLeituras() throws SQLException {
+
+        System.out.println("\n---------- LISTAR LEITURAS ----------");
+
+        List<Leitura> leituras = leituraController.listar();
+
+        if (leituras.isEmpty()) {
+            System.out.println("Nenhuma leitura cadastrada.");
+            return;
+        }
+
+        for (Leitura leitura : leituras) {
+            System.out.println();
+            exibirLeitura(leitura);
+        }
+    }
+
+    private static void exibirLeitura(Leitura leitura) {
+
+        System.out.println("ID: " + leitura.getId());
+        System.out.println("Data e hora: " + leitura.getDataHora());
+        System.out.println("Sensor: " + leitura.getSensor().getNome());
+        System.out.println("Tipo do sensor: " + leitura.getSensor().getTipo());
+        System.out.println("Lote: " + leitura.getSensor().getIdLote());
+
+        if (leitura instanceof LeituraHidroponica hidroponica) {
+            System.out.println("Tipo de leitura: HIDROPONICA");
+            System.out.println("pH: " + hidroponica.getPh());
+            System.out.println("EC: " + hidroponica.getEc());
+        }
+
+        if (leitura instanceof LeituraAmbiental ambiental) {
+            System.out.println("Tipo de leitura: AMBIENTAL");
+            System.out.println("Temperatura do ar: " + ambiental.getTempAr() + " °C");
+            System.out.println("Umidade relativa: " + ambiental.getUmidade() + " %");
+            System.out.println("CO2: " + ambiental.getCo2() + " ppm");
+        }
+    }
+
+    private static void consultarAlerta() throws SQLException {
+
+        System.out.println("\n---------- CONSULTAR ALERTA ----------");
+        System.out.print("Informe o ID: ");
+
+        int id = Integer.parseInt(input.nextLine());
+
+        Alerta alerta = alertaController.buscarPorId(id);
+
+        if (alerta == null) {
+            System.out.println("Alerta não encontrado!");
+            return;
+        }
+
+        exibirAlerta(alerta);
+    }
+
+    private static void listarAlertas() throws SQLException {
+
+        System.out.println("\n---------- LISTAR ALERTAS ----------");
+
+        List<Alerta> alertas = alertaController.listar();
+
+        if (alertas.isEmpty()) {
+            System.out.println("Nenhum alerta registrado.");
+            return;
+        }
+
+        for (Alerta alerta : alertas) {
+            System.out.println();
+            exibirAlerta(alerta);
+        }
+    }
+
+    private static void exibirAlerta(Alerta alerta) {
+
+        System.out.println("ID: " + alerta.getId());
+        System.out.println("Parâmetro: " + alerta.getParametro());
+        System.out.println("Criticidade: " + alerta.getCriticidade());
+        System.out.println("Descrição: " + alerta.getDescricao());
+        System.out.println("Data e hora: " + alerta.getDataHora());
+        System.out.println("Leitura vinculada: " + alerta.getLeitura().getId());
+    }
+
+    private static void cadastrarColheita() throws SQLException {
+
+        System.out.println("\n---------- REGISTRAR COLHEITA ----------");
+
+        System.out.print("ID do lote: ");
+        int idLote = Integer.parseInt(input.nextLine());
+
+        Lote lote = loteController.buscarPorId(idLote);
+
+        if (lote == null) {
+            System.out.println("Lote não encontrado!");
+            return;
+        }
+
+        System.out.println("Lote: " + lote.getId());
+        System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+        System.out.println("Status: " + lote.getStatus());
+
+        System.out.print("Data da colheita (AAAA-MM-DD): ");
+        LocalDate data = LocalDate.parse(input.nextLine());
+
+        System.out.print("Peso total da biomassa (kg): ");
+        double pesoBiomassa = Double.parseDouble(input.nextLine());
+
+        System.out.print("Peso de descarte (kg): ");
+        double pesoDescarte = Double.parseDouble(input.nextLine());
+
+        Colheita colheita = new Colheita(
+                data,
+                pesoBiomassa,
+                pesoDescarte,
+                lote
+        );
+
+        if (colheitaController.cadastrar(colheita)) {
+            System.out.println("Colheita registrada com sucesso!");
+            System.out.println("Peso aproveitado: " + (pesoBiomassa - pesoDescarte) + " kg");
+            System.out.println("Rendimento: " + colheita.calcularRendimentoArea() + " kg/m²");
+            System.out.println("Taxa de aproveitamento: " + colheita.calcularAproveitamento() + "%");
+        } else
+            System.out.println("Não foi possível registrar a colheita.");
+    }
+
+    private static void consultarColheita() throws SQLException {
+
+        System.out.println("\n---------- CONSULTAR COLHEITA ----------");
+
+        System.out.print("Informe o ID do lote: ");
+        int idLote = Integer.parseInt(input.nextLine());
+
+        Colheita colheita = colheitaController.buscarPorLote(idLote);
+
+        if (colheita == null) {
+            System.out.println("Colheita não encontrada!");
+            return;
+        }
+
+        exibirColheita(colheita);
+    }
+
+    private static void listarColheitas() throws SQLException {
+
+        System.out.println("\n---------- LISTAR COLHEITAS ----------");
+
+        List<Colheita> colheitas = colheitaController.listar();
+
+        if (colheitas.isEmpty()) {
+            System.out.println("Nenhuma colheita registrada.");
+            return;
+        }
+
+        for (Colheita colheita : colheitas) {
+            System.out.println();
+            exibirColheita(colheita);
+        }
+    }
+
+    private static void exibirColheita(Colheita colheita) {
+
+        Lote lote = colheita.getLote();
+
+        System.out.println("Lote: " + lote.getId());
+        System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+        System.out.println("Data da colheita: " + colheita.getData());
+        System.out.println("Peso total: " + colheita.getPesoBiomassa() + " kg");
+        System.out.println("Peso descartado: " + colheita.getPesoDescarte() + " kg");
+        System.out.println("Peso aproveitado: " +
+                (colheita.getPesoBiomassa() - colheita.getPesoDescarte()) + " kg");
+        System.out.println("Área ocupada: " + lote.getAreaOcupada() + " m²");
+        System.out.println("Rendimento: " + colheita.calcularRendimentoArea() + " kg/m²");
+        System.out.println("Ciclo real: " + colheita.calcularTempoCiclo() + " dias");
+        System.out.println("Ciclo planejado: " + lote.getCultura().getReceita().getCicloDias() + " dias");
+        System.out.println("Taxa de aproveitamento: " + colheita.calcularAproveitamento() + "%");
+    }
+
+    private static void relatorioProdutividade() throws SQLException {
+
+        System.out.println("\n---------- RELATÓRIO DE PRODUTIVIDADE ----------");
+
+        List<Colheita> colheitas = colheitaController.listar();
+
+        if (colheitas.isEmpty()) {
+            System.out.println("Nenhuma colheita registrada para gerar o relatório.");
+            return;
+        }
+
+        double pesoTotal = 0;
+        double pesoDescarte = 0;
+        double pesoAproveitado = 0;
+        double areaTotal = 0;
+        double totalCicloReal = 0;
+        double totalCicloPlanejado = 0;
+
+        for (Colheita colheita : colheitas) {
+
+            Lote lote = colheita.getLote();
+
+            double aproveitado = colheita.getPesoBiomassa() - colheita.getPesoDescarte();
+
+            double rendimento = colheita.calcularRendimentoArea();
+
+            long cicloReal = colheita.calcularTempoCiclo();
+
+            int cicloPlanejado = lote.getCultura().getReceita().getCicloDias();
+
+            System.out.println("\n---------- LOTE " + lote.getId() + " ----------");
+            System.out.println("Cultura: " + lote.getCultura().getNomePopular());
+            System.out.println("Peso total: " + colheita.getPesoBiomassa() + " kg");
+            System.out.println("Peso descartado: " + colheita.getPesoDescarte() + " kg");
+            System.out.println("Peso aproveitado: " + aproveitado + " kg");
+            System.out.println("Rendimento: " + rendimento + " kg/m²");
+            System.out.println("Ciclo real: " + cicloReal + " dias");
+            System.out.println("Ciclo planejado: " + cicloPlanejado + " dias");
+            System.out.println("Aproveitamento: " + colheita.calcularAproveitamento() + "%");
+
+            pesoTotal += colheita.getPesoBiomassa();
+            pesoDescarte += colheita.getPesoDescarte();
+            pesoAproveitado += aproveitado;
+            areaTotal += lote.getAreaOcupada();
+            totalCicloReal += cicloReal;
+            totalCicloPlanejado += cicloPlanejado;
+        }
+
+        double rendimentoConsolidado = pesoAproveitado / areaTotal;
+        double aproveitamentoConsolidado = (pesoAproveitado / pesoTotal) * 100;
+
+        double mediaCicloReal = totalCicloReal / colheitas.size();
+        double mediaCicloPlanejado = totalCicloPlanejado / colheitas.size();
+
+        System.out.println("\n---------- RESUMO CONSOLIDADO ----------");
+
+        System.out.println("Quantidade de lotes colhidos: " + colheitas.size());
+        System.out.println("Peso total colhido: " + pesoTotal + " kg");
+        System.out.println("Peso total descartado: " + pesoDescarte + " kg");
+        System.out.println("Peso total aproveitado: " + pesoAproveitado + " kg");
+        System.out.println("Área total considerada: " + areaTotal + " m²");
+        System.out.println("Rendimento consolidado: " + rendimentoConsolidado + " kg/m²");
+        System.out.println("Taxa de aproveitamento consolidada: " + aproveitamentoConsolidado + "%");
+        System.out.println("Média do ciclo real: " + mediaCicloReal + " dias");
+        System.out.println("Média do ciclo planejado: " + mediaCicloPlanejado + " dias");
     }
 }
